@@ -26,6 +26,7 @@ import cn.ucai.fulicenter.model.net.IModelNewGoods;
 import cn.ucai.fulicenter.model.net.ModelNewGoods;
 import cn.ucai.fulicenter.model.net.OnCompleteListener;
 import cn.ucai.fulicenter.model.utils.ConvertUtils;
+import cn.ucai.fulicenter.model.utils.SpaceItemDecoration;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +40,7 @@ public class NewGoodsFragment extends Fragment {
 
     @BindView(R.id.tvHint)
     TextView tvHint;
-    @BindView(R.id.rvGoods)
+    @BindView(R.id.rvBoutique)
     RecyclerView rvGoods;
     @BindView(R.id.srl)
     SwipeRefreshLayout srl;
@@ -151,6 +152,7 @@ public class NewGoodsFragment extends Fragment {
         rvGoods.setHasFixedSize(true);
         mGoodsList = new ArrayList<>();
         mAdapter = new GoodsAdapter(getContext(), mGoodsList);
+        rvGoods.addItemDecoration(new SpaceItemDecoration(15));
         rvGoods.setAdapter(mAdapter);
 
     }
