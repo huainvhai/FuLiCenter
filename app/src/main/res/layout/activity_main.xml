@@ -59,4 +59,10 @@
             android:text="个人中心"
             android:textColor="@color/main_botton_text_color" />
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/main_bottom" />
 </RelativeLayout>

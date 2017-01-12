@@ -21,39 +21,100 @@ import cn.ucai.fulicenter.model.utils.ImageLoader;
  */
 
 public class GoodsAdapter extends RecyclerView.Adapter {
+    final static int TYPE_GOODS = 0;
+    final static int TYPE_FOOTER = 1;
+
     Context mContext;
     ArrayList<NewGoodsBean> mList;
+    String footer;
+    boolean isMore;
+    boolean isDragging;
+
+    public boolean isDragging() {
+        return isDragging;
+    }
+
+    public void setDragging(boolean dragging) {
+        isDragging = dragging;
+    }
+
+    public String getFooter() {
+        return footer;
+    }
+
+    public void setFooter(String footer) {
+        this.footer = footer;
+    }
+
+    public boolean isMore() {
+        return isMore;
+    }
+
+    public void setMore(boolean more) {
+        isMore = more;
+        notifyDataSetChanged();
+    }
 
     public GoodsAdapter(Context context, ArrayList<NewGoodsBean> list) {
         this.mContext = context;
-        mList = new ArrayList<>();
-        mList.addAll(list);
+        mList = list;
+    }
 
+    public void initGoodsList(ArrayList<NewGoodsBean> list) {
+        if (list != null) {
+            this.mList.clear();
+        }
+        addGoodsList(list);
+    }
+
+    public void addGoodsList(ArrayList<NewGoodsBean> list) {
+        this.mList.addAll(list);
+        notifyDataSetChanged();
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater.from(mContext).inflate(R.layout.item_goods, null);
+        LayoutInflater layout = LayoutInflater.from(mContext);
+        View view;
+        switch (viewType) {
+            case TYPE_FOOTER:
+                view = layout.inflate(R.layout.item_footer, parent, false);
+                return new FooterViewHolder(view);
+            case TYPE_GOODS:
+                view = layout.inflate(R.layout.item_goods, parent, false);
+                return new GoodsViewHolder(view);
+        }
         return null;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        GoodsViewHolder vh = (GoodsViewHolder) holder;
-        if (holder != null) {
-            vh = (GoodsViewHolder) holder;
+    public void onBindViewHolder(RecyclerView.ViewHolder parentHolder, int position) {
+        if(getItemViewType(position) == TYPE_FOOTER){
+            FooterViewHolder holder = (FooterViewHolder) parentHolder;
+            holder.tvFooter.setText(getFooter());
+            return;
         }
-        ImageLoader.downloadImg(mContext, vh.ivGoodsThumb, mList.get(position).getGoodsThumb());
-        vh.tvGoodsName.setText(mList.get(position).getGoodsName());
-        vh.tvGoodsPrice.setText(mList.get(position).getCurrencyPrice());
+        NewGoodsBean goodsBean = mList.get(position);
+        GoodsViewHolder holder = (GoodsViewHolder) parentHolder;
+        ImageLoader.downloadImg(mContext, holder.ivGoodsThumb, goodsBean.getGoodsThumb());
+        holder.tvGoodsName.setText(goodsBean.getGoodsName());
+        holder.tvGoodsPrice.setText(goodsBean.getCurrencyPrice());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mList.size() + 1;
     }
 
-    static class GoodsViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public int getItemViewType(int position) {
+        if (position == getItemCount() - 1) {
+            return TYPE_FOOTER;
+        }
+        return TYPE_GOODS;
+    }
+
+    static class GoodsViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.ivGoodsThumb)
         ImageView ivGoodsThumb;
         @BindView(R.id.tvGoodsName)
@@ -62,6 +123,17 @@ public class GoodsAdapter extends RecyclerView.Adapter {
         TextView tvGoodsPrice;
 
         GoodsViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+    }
+
+
+    static class FooterViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tvFooter)
+        TextView tvFooter;
+
+        FooterViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
