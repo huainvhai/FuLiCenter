@@ -1,6 +1,7 @@
 package cn.ucai.fulicenter.controller.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,17 +15,17 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.I;
+import cn.ucai.fulicenter.controller.activity.BoutiqueDetailActivity;
 import cn.ucai.fulicenter.model.bean.BoutiqueBean;
 import cn.ucai.fulicenter.model.utils.ImageLoader;
+import cn.ucai.fulicenter.view.MFGT;
 
 /**
  * Created by Administrator on 2017/1/11.
  */
 
 public class BoutiqueAdapter extends RecyclerView.Adapter {
-    final static int TYPE_BOUTIQUE = 0;
-    final static int TYPE_FOOTER = 1;
-
     Context mContext;
     ArrayList<BoutiqueBean> mList;
 
@@ -53,12 +54,18 @@ public class BoutiqueAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder parentHolder, int position) {
-        BoutiqueBean boutiqueBean = mList.get(position);
+        final BoutiqueBean boutiqueBean = mList.get(position);
         BoutiqueViewHolder holder = (BoutiqueViewHolder) parentHolder;
         ImageLoader.downloadImg(mContext, holder.ivBoutiqueImg, boutiqueBean.getImageurl());
         holder.tvBoutiqueTitle.setText(boutiqueBean.getTitle());
         holder.tvBoutiqueName.setText(boutiqueBean.getName());
         holder.tvBoutiqueDescription.setText(boutiqueBean.getDescription());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MFGT.gotoBoutiqueDetail(mContext,boutiqueBean);
+            }
+        });
     }
 
     @Override

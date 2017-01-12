@@ -104,7 +104,8 @@ public class NewGoodsFragment extends Fragment {
     }
 
     private void downloadGoodsList(final int action, int pageId) {
-        mModel.downloadData(getContext(), I.CAT_ID, pageId, new OnCompleteListener<NewGoodsBean[]>() {
+        int catId = getActivity().getIntent().getIntExtra(I.NewAndBoutiqueGoods.CAT_ID,0);
+        mModel.downloadData(getContext(), catId, pageId, new OnCompleteListener<NewGoodsBean[]>() {
             @Override
             public void onSuccess(NewGoodsBean[] result) {
                 Log.e(TAG, Arrays.toString(result));
