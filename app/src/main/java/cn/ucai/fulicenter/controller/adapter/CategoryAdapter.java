@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.model.bean.CategoryChildBean;
 import cn.ucai.fulicenter.model.bean.CategoryGroupBean;
 import cn.ucai.fulicenter.model.utils.ImageLoader;
+import cn.ucai.fulicenter.view.MFGT;
 
 /**
  * Created by Administrator on 2017/1/16.
@@ -94,7 +96,7 @@ public class CategoryAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildViewHolder holder;
         if (convertView == null) {
             //view = LayoutInflater.from(context).inflate(R.layout.item_category_child, null);
@@ -106,6 +108,12 @@ public class CategoryAdapter extends BaseExpandableListAdapter {
         }
         ImageLoader.downloadImg(context, holder.ivCategoryChildThumb, getChild(groupPosition, childPosition).getImageUrl());
         holder.tvCategoryChildNaem.setText(getChild(groupPosition, childPosition).getName());
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MFGT.gotoCategory(context, mChildList.get(groupPosition).get(childPosition).getId());
+            }
+        });
         return convertView;
     }
 
@@ -116,7 +124,7 @@ public class CategoryAdapter extends BaseExpandableListAdapter {
 
     public void initData(ArrayList<CategoryGroupBean> groupList,
                          ArrayList<ArrayList<CategoryChildBean>> childList) {
-        Log.e("adapter","initData");
+        Log.e("adapter", "initData");
         mGroupList.clear();
         mGroupList.addAll(groupList);
         mChildList.clear();
