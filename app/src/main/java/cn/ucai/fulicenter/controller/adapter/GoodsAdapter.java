@@ -108,7 +108,7 @@ public class GoodsAdapter extends RecyclerView.Adapter {
     int getPrice(String price) {
         int p = 0;
         p = Integer.parseInt(price.substring(price.indexOf("￥") + 1));
-        Log.e("adapter", "p=" + p);
+        //Log.e("adapter", "p=" + p);
         return p;
     }
 
