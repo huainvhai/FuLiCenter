@@ -4,6 +4,36 @@
     android:background="#fff"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/main_orange">
+
+        <LinearLayout
+            android:id="@+id/backClickArea"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/back" />
+        </LinearLayout>
+
+        <cn.ucai.fulicenter.view.CatFilterButton
+            android:id="@+id/cat_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:drawableRight="@drawable/arrow2_up"
+            android:text="分类"
+            android:textColor="@color/white" />
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/layout_sort"

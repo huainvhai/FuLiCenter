@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -12,6 +15,9 @@ import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.controller.fragment.NewGoodsFragment;
+import cn.ucai.fulicenter.model.bean.CategoryChildBean;
+import cn.ucai.fulicenter.view.CatFilterButton;
+import cn.ucai.fulicenter.view.MFGT;
 
 public class CategoryActivity extends AppCompatActivity {
     NewGoodsFragment mNewGoodsFragment;
@@ -21,6 +27,10 @@ public class CategoryActivity extends AppCompatActivity {
     Button btnSortPrice;
     @BindView(R.id.btn_sort_addtime)
     Button btnSortAddtime;
+    @BindView(R.id.cat_filter)
+    CatFilterButton catFilter;
+    @BindView(R.id.backClickArea)
+    LinearLayout backClickArea;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +41,10 @@ public class CategoryActivity extends AppCompatActivity {
         mNewGoodsFragment = new NewGoodsFragment();
         getSupportFragmentManager().beginTransaction().
                 add(R.id.fragment_container2, mNewGoodsFragment).commit();
+        String groupName = getIntent().getStringExtra(I.CategoryGroup.NAME);
+        ArrayList<CategoryChildBean> list = (ArrayList<CategoryChildBean>) getIntent()
+                .getSerializableExtra(I.CategoryChild.DATA);
+        catFilter.initCatFilterButton(groupName, list);
     }
 
     @OnClick({R.id.btn_sort_price, R.id.btn_sort_addtime})
@@ -66,5 +80,10 @@ public class CategoryActivity extends AppCompatActivity {
                 break;
         }
         mNewGoodsFragment.sortGoods(sortBy);
+    }
+
+    @OnClick(R.id.backClickArea)
+    public void onClick() {
+        MFGT.finish(this);
     }
 }
