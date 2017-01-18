@@ -20,8 +20,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".controller.activity.BoutiqueDetailActivity" />
-        <activity android:name=".controller.activity.GoodsDetailActivity"/>
-        <activity android:name=".controller.activity.CategoryActivity"/>
+        <activity android:name=".controller.activity.GoodsDetailActivity" />
+        <activity android:name=".controller.activity.CategoryActivity" />
+        <activity android:name=".controller.activity.LoginActivity" />
+        <activity android:name=".controller.activity.RegisterActivity" />
     </application>
 
 </manifest>
