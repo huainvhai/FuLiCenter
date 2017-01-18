@@ -50,6 +50,8 @@ public class CategoryFragment extends Fragment {
         ButterKnife.bind(this, view);
         mAdapter = new CategoryAdapter(getActivity(), mGroupList, mChildList);
         elvCategory.setAdapter(mAdapter);
+        //消除大类前的箭头
+        elvCategory.setGroupIndicator(null);
         initView(false);
         initData();
         return view;
@@ -68,7 +70,7 @@ public class CategoryFragment extends Fragment {
                     //通过大类的id下载小类
                     for (int i = 0; i < groupList.size(); i++) {
                         mChildList.add(new ArrayList<CategoryChildBean>());
-                        downloadChildData(groupList.get(i).getId(),i);
+                        downloadChildData(groupList.get(i).getId(), i);
                     }
 
                 } else {
@@ -93,7 +95,7 @@ public class CategoryFragment extends Fragment {
                 groupCount++;
                 if (result != null) {
                     ArrayList<CategoryChildBean> childList = ConvertUtils.array2List(result);
-                    mChildList.set(index,childList);
+                    mChildList.set(index, childList);
                 }
                 //如果下载成功值=大类的数量 则便表示下载完成 使用adapter填充数据并更新
                 if (groupCount == mGroupList.size()) {
