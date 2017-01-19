@@ -9,13 +9,15 @@ import android.content.SharedPreferences;
 
 public class SharedPreferenceUtils {
     private static final String SHARED_PREFERENCE_USER = "cn.ucai.fulicenter.user";
-    private static final String SHARED_PREFERENCE_USER_USERNAME = "cn.ucai.fulicenter.user_username";
+    private static final String SHARED_KEY_USERNAME = "cn.ucai.fulicenter.user_username";
 
     private static SharedPreferences preferences;
     private static SharedPreferenceUtils instance;
+    SharedPreferences.Editor edit;
 
     public SharedPreferenceUtils(Context context) {
         preferences = context.getSharedPreferences(SHARED_PREFERENCE_USER, Context.MODE_PRIVATE);
+        edit = preferences.edit();
     }
 
     public static SharedPreferenceUtils getInstance(Context context) {
@@ -27,10 +29,15 @@ public class SharedPreferenceUtils {
 
     //保存用户名
     public void saveUser(String username) {
-        preferences.edit().putString(SHARED_PREFERENCE_USER_USERNAME, username).commit();
+        edit.putString(SHARED_KEY_USERNAME, username).commit();
     }
 
     public String getUser() {
-        return preferences.getString(SHARED_PREFERENCE_USER_USERNAME, null);
+        return preferences.getString(SHARED_KEY_USERNAME, null);
+    }
+
+    //退出登录时
+    public void removeUser() {
+        edit.remove(SHARED_KEY_USERNAME).commit();
     }
 }

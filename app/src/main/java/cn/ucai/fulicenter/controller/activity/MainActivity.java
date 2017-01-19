@@ -13,6 +13,7 @@ import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.controller.fragment.BoutiqueFragment;
 import cn.ucai.fulicenter.controller.fragment.CategoryFragment;
 import cn.ucai.fulicenter.controller.fragment.NewGoodsFragment;
+import cn.ucai.fulicenter.controller.fragment.PersonalFragment;
 import cn.ucai.fulicenter.view.MFGT;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     NewGoodsFragment mGoodsFragment;
     BoutiqueFragment mBoutiqueFragment;
     CategoryFragment mCategoryFragment;
+    PersonalFragment mPersonalFragment;
     Fragment[] mFragemnts;
 
     @Override
@@ -50,17 +52,21 @@ public class MainActivity extends AppCompatActivity {
         mGoodsFragment = new NewGoodsFragment();
         mBoutiqueFragment = new BoutiqueFragment();
         mCategoryFragment = new CategoryFragment();
+        mPersonalFragment = new PersonalFragment();
         mFragemnts[0] = mGoodsFragment;
         mFragemnts[1] = mBoutiqueFragment;
         mFragemnts[2] = mCategoryFragment;
+        mFragemnts[4] = mPersonalFragment;
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, mGoodsFragment)
                 .add(R.id.container, mBoutiqueFragment)
                 .add(R.id.container, mCategoryFragment)
+                .add(R.id.container, mPersonalFragment)
                 .show(mGoodsFragment)
                 .hide(mBoutiqueFragment)
                 .hide(mCategoryFragment)
+                .hide(mPersonalFragment)
                 .commit();
     }
 

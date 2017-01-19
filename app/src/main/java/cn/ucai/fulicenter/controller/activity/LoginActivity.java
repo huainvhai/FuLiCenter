@@ -3,6 +3,7 @@ package cn.ucai.fulicenter.controller.activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -14,6 +15,7 @@ import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.model.bean.Result;
 import cn.ucai.fulicenter.model.bean.User;
+import cn.ucai.fulicenter.model.dao.UserDao;
 import cn.ucai.fulicenter.model.net.IModelUser;
 import cn.ucai.fulicenter.model.net.ModelUser;
 import cn.ucai.fulicenter.model.net.OnCompleteListener;
@@ -26,6 +28,7 @@ import cn.ucai.fulicenter.view.MFGT;
  * Created by Administrator on 2017/1/18.
  */
 public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = LoginActivity.class.getSimpleName();
     IModelUser mModel;
     @BindView(R.id.etUserName)
     EditText etUserName;
@@ -67,10 +70,16 @@ public class LoginActivity extends AppCompatActivity {
                     Result result = ResultUtils.getResultFromJson(s, User.class);
                     if (result != null) {
                         if (result.isRetMsg()) {
-                            //将用户信息保存到内存中
+                            //获取当前用户user
                             User user = (User) result.getRetData();
-                            SharedPreferenceUtils.getInstance(LoginActivity.this).saveUser(user.getMuserName());
-                            FuLiCenterApplication.setUser(user);
+                            //用户信息保存到数据库中
+                            boolean saveUser = UserDao.getInstance().saveUser(user);
+                            Log.e(TAG, "saveUser=" + saveUser);
+                            //如果数据库保存成功 则保存到内存中及全局中
+                            if (saveUser) {
+                                SharedPreferenceUtils.getInstance(LoginActivity.this).saveUser(user.getMuserName());
+                                FuLiCenterApplication.setUser(user);
+                            }
 
                             MFGT.finish(LoginActivity.this);
                         } else {
