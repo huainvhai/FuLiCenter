@@ -1,6 +1,7 @@
 package cn.ucai.fulicenter.controller.activity;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -100,8 +101,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setFragment() {
-        getSupportFragmentManager().beginTransaction().show(mFragemnts[index])
-                .hide(mFragemnts[currentIndex]).commit();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.hide(mFragemnts[currentIndex]);
+        //判断fragment是否被添加
+        if (!mFragemnts[index].isAdded()) {
+            ft.add(R.id.container, mFragemnts[index]);
+        }
+        ft.show(mFragemnts[index]).commit();
     }
 
     private void setRadioStatus() {
