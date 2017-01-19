@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                                 SharedPreferenceUtils.getInstance(LoginActivity.this).saveUser(user.getMuserName());
                                 FuLiCenterApplication.setUser(user);
                             }
-
+                            setResult(RESULT_OK);
                             MFGT.finish(LoginActivity.this);
                         } else {
                             if (result.getRetCode() == I.MSG_LOGIN_UNKNOW_USER) {
