@@ -1,5 +1,6 @@
 package cn.ucai.fulicenter.controller.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
@@ -10,6 +11,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.model.bean.User;
 import cn.ucai.fulicenter.model.net.SharedPreferenceUtils;
 import cn.ucai.fulicenter.model.utils.ImageLoader;
@@ -50,11 +52,25 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btn_logout)
-    public void onClick() {
+    public void logout() {
         //退出登录进入登录界面 但是要清空FuLiCenterApplication的变量和sharedPreference中的数据
         FuLiCenterApplication.setUser(null);
         SharedPreferenceUtils.getInstance(this).removeUser();
         MFGT.gotoLogin(this);
         MFGT.finish(this);
+    }
+
+    @OnClick(R.id.layout_user_profile_nickname)
+    public void updateNick() {
+        MFGT.gotoUpdateNick(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == I.REQUEST_CODE_NICK) {
+            //重新从全局获取就要在更新成功后重新保存user数据
+            tvUserProfileNick.setText(FuLiCenterApplication.getUser().getMuserNick());
+        }
     }
 }

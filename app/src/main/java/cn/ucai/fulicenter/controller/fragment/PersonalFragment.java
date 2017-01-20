@@ -54,6 +54,13 @@ public class PersonalFragment extends Fragment {
         }
     }
 
+    //更新昵称后 回到个人中心界面也要重新加载数据
+    @Override
+    public void onResume() {
+        super.onResume();
+        initData();
+    }
+
     private void loadUserInfo(User user) {
         ImageLoader.setAvatar(ImageLoader.getAvatarUrl(user), getContext(), ivUserAvatar);
         tvUserName.setText(user.getMuserNick());
