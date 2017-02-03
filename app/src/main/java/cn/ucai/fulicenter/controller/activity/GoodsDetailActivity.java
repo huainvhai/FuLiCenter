@@ -10,12 +10,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.model.bean.AlbumsBean;
 import cn.ucai.fulicenter.model.bean.GoodsDetailsBean;
+import cn.ucai.fulicenter.model.bean.MessageBean;
+import cn.ucai.fulicenter.model.bean.User;
 import cn.ucai.fulicenter.model.net.IModelGoods;
 import cn.ucai.fulicenter.model.net.ModeGoods;
 import cn.ucai.fulicenter.model.net.OnCompleteListener;
+import cn.ucai.fulicenter.model.utils.CommonUtils;
 import cn.ucai.fulicenter.view.FlowIndicator;
 import cn.ucai.fulicenter.view.MFGT;
 import cn.ucai.fulicenter.view.SlideAutoLoopView;
@@ -39,6 +43,10 @@ public class GoodsDetailActivity extends AppCompatActivity {
     WebView wvGoodBrief;
     @BindView(R.id.ivBack2)
     ImageView ivBack2;
+
+    boolean isCollect;
+    @BindView(R.id.iv_good_collect)
+    ImageView ivGoodCollect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +113,82 @@ public class GoodsDetailActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.ivBack2)
-    public void onClick() {
+    public void onClickBack() {
         MFGT.finish(this);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initCollectStatus();
+
+    }
+
+    private void setCollectStatus() {
+        if (isCollect) {
+            ivGoodCollect.setImageResource(R.mipmap.bg_collect_out);
+        } else {
+            ivGoodCollect.setImageResource(R.mipmap.bg_collect_in);
+        }
+    }
+
+    @OnClick(R.id.iv_good_collect)
+    public void onClickCollect() {
+        //首先判断是否登录
+        User user = FuLiCenterApplication.getUser();
+        if (user != null) {
+            //点击图标改变收藏的状态
+            setCollect(user);
+        } else {
+            MFGT.gotoLogin(this);
+        }
+    }
+
+    private void setCollect(User user) {
+        mModel.setCollect(this, goodsId, user.getMuserName(),
+                isCollect ? I.ACTION_DELETE_COLLECT : I.ACTION_ADD_COLLECT,
+                new OnCompleteListener<MessageBean>() {
+                    @Override
+                    public void onSuccess(MessageBean result) {
+                        if (result != null && result.isSuccess()) {
+                            //状态取反 然后重新设置
+                            isCollect = !isCollect;
+                            setCollectStatus();
+                            CommonUtils.showShortToast(result.getMsg());
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                });
+    }
+
+    private void initCollectStatus() {
+        //首先判断是否登录
+        User user = FuLiCenterApplication.getUser();
+        if (user != null) {
+            //即登录成功
+            mModel.isCollect(this, goodsId, user.getMuserName(), new OnCompleteListener<MessageBean>() {
+                @Override
+                public void onSuccess(MessageBean result) {
+                    if (result != null && result.isSuccess()) {
+                        isCollect = true;
+                    } else {
+                        isCollect = false;
+                    }
+                    setCollectStatus();
+                }
+
+                @Override
+                public void onError(String error) {
+                    isCollect = false;
+                    setCollectStatus();
+                }
+            });
+        }
+    }
+
+
 }

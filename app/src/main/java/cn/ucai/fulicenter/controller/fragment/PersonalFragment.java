@@ -3,6 +3,7 @@ package cn.ucai.fulicenter.controller.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ import cn.ucai.fulicenter.view.MFGT;
  * A simple {@link Fragment} subclass.
  */
 public class PersonalFragment extends Fragment {
-
+    private static final String TAG = PersonalFragment.class.getSimpleName();
 
     @BindView(R.id.iv_user_avatar)
     ImageView ivUserAvatar;
@@ -50,7 +51,8 @@ public class PersonalFragment extends Fragment {
             //加载用户信息
             loadUserInfo(user);
         } else {
-            MFGT.gotoLogin(getActivity());
+            Log.e(TAG, "user null");
+            //MFGT.gotoLogin(getActivity());
         }
     }
 

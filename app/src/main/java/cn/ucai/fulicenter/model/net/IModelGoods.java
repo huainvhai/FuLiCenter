@@ -4,11 +4,14 @@ import android.content.Context;
 
 import cn.ucai.fulicenter.model.bean.BoutiqueBean;
 import cn.ucai.fulicenter.model.bean.GoodsDetailsBean;
+import cn.ucai.fulicenter.model.bean.MessageBean;
 
 /**
  * Created by Administrator on 2017/1/12.
  */
 
 public interface IModelGoods {
-    void downloadData(Context context, int goodsId,OnCompleteListener<GoodsDetailsBean> listener);
+    void downloadData(Context context, int goodsId, OnCompleteListener<GoodsDetailsBean> listener);
+    void isCollect(Context context, int goodsId, String username, OnCompleteListener<MessageBean> listener);
+    void setCollect(Context context, int goodsId, String username, int action,OnCompleteListener<MessageBean> listener);
 }
