@@ -68,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(String s) {
                 if (s != null) {
                     Result result = ResultUtils.getResultFromJson(s, User.class);
+                    Log.e(TAG, "result=" + result);
                     if (result != null) {
                         if (result.isRetMsg()) {
                             //获取当前用户user
