@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.io.File;
 
+import cn.ucai.fulicenter.model.bean.MessageBean;
 import cn.ucai.fulicenter.model.bean.User;
 
 /**
@@ -15,4 +16,5 @@ public interface IModelUser {
     void register(Context context, String username, String usernick,String password, OnCompleteListener<String> listener);
     void updateNick(Context context, String username, String usernick, OnCompleteListener<String> listener);
     void updateAvatar(Context context, String nameOrhxid, File file, OnCompleteListener<String> listener);
+    void getCollectCount(Context context, String username,OnCompleteListener<MessageBean> listener);
 }
