@@ -2,6 +2,7 @@ package cn.ucai.fulicenter.controller.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,16 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.model.bean.CollectBean;
+import cn.ucai.fulicenter.model.bean.MessageBean;
+import cn.ucai.fulicenter.model.bean.User;
+import cn.ucai.fulicenter.model.net.IModelGoods;
+import cn.ucai.fulicenter.model.net.ModeGoods;
+import cn.ucai.fulicenter.model.net.OnCompleteListener;
 import cn.ucai.fulicenter.model.utils.ImageLoader;
 import cn.ucai.fulicenter.view.MFGT;
 
@@ -25,12 +34,15 @@ import cn.ucai.fulicenter.view.MFGT;
 public class CollectAdapter extends RecyclerView.Adapter {
     final static int TYPE_GOODS = 0;
     final static int TYPE_FOOTER = 1;
+    private static final String TAG = CollectAdapter.class.getSimpleName();
 
     Context mContext;
     ArrayList<CollectBean> mList;
     String footer;
     boolean isMore;
     boolean isDragging;
+    IModelGoods model;
+    User user;
 
     public boolean isDragging() {
         return isDragging;
@@ -60,6 +72,8 @@ public class CollectAdapter extends RecyclerView.Adapter {
     public CollectAdapter(Context context, ArrayList<CollectBean> list) {
         this.mContext = context;
         mList = list;
+        model = new ModeGoods();
+        user = FuLiCenterApplication.getUser();
     }
 
     public void initGoodsList(ArrayList<CollectBean> list) {
@@ -97,16 +111,8 @@ public class CollectAdapter extends RecyclerView.Adapter {
             holder.tvFooter.setText(getFooter());
             return;
         }
-        final CollectBean goodsBean = mList.get(position);
         CollectsViewHolder holder = (CollectsViewHolder) parentHolder;
-        ImageLoader.downloadImg(mContext, holder.ivGoodsThumb, goodsBean.getGoodsThumb());
-        holder.tvGoodsName.setText(goodsBean.getGoodsName());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MFGT.gotoGoodsDetail(mContext, goodsBean.getGoodsId());
-            }
-        });
+        holder.bind(position);
     }
 
     @Override
@@ -133,7 +139,7 @@ public class CollectAdapter extends RecyclerView.Adapter {
     }
 
 
-    static class CollectsViewHolder extends RecyclerView.ViewHolder{
+    class CollectsViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.ivGoodsThumb)
         ImageView ivGoodsThumb;
         @BindView(R.id.tvGoodsName)
@@ -143,9 +149,39 @@ public class CollectAdapter extends RecyclerView.Adapter {
         @BindView(R.id.layout_goods)
         RelativeLayout layoutGoods;
 
+        int itemPosition;
+
         CollectsViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+        }
+
+        public void bind(final int position) {
+            ImageLoader.downloadImg(mContext, ivGoodsThumb, mList.get(position).getGoodsThumb());
+            tvGoodsName.setText(mList.get(position).getGoodsName());
+            itemPosition = position;
+        }
+
+        @OnClick(R.id.layout_goods)
+        public void collectDetail() {
+            MFGT.gotoGoodsDetail(mContext, mList.get(itemPosition).getGoodsId());
+        }
+
+        @OnClick(R.id.iv_collect_del)
+        public void deleteCollect() {
+            model.setCollect(mContext, mList.get(itemPosition).getGoodsId(), user.getMuserName(),
+                    I.ACTION_DELETE_COLLECT, new OnCompleteListener<MessageBean>() {
+                        @Override
+                        public void onSuccess(MessageBean result) {
+                            mList.remove(itemPosition);
+                            notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            Log.e(TAG, "error=" + error);
+                        }
+                    });
         }
     }
 }

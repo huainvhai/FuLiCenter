@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ import cn.ucai.fulicenter.view.DisplayUtils;
 
 public class CollectsActivity extends AppCompatActivity {
     private static final String TAG = CollectsActivity.class.getSimpleName();
+    public static final int ACTION_DOWNLOAD = 0;
+    public static final int ACTION_PULL_UP = 1;
+    public static final int ACTION_PULL_DOWN = 2;
 
     @BindView(R.id.tvHint)
     TextView tvHint;
@@ -55,21 +59,39 @@ public class CollectsActivity extends AppCompatActivity {
             finish();
         } else {
             initView();
-            initData();
+            initData(ACTION_DOWNLOAD, pageId);
+            setPullDownListener();
+            setPullUpListener();
         }
     }
 
-    private void initData() {
+    private void initData(final int action, int pageId) {
         model = new ModelUser();
         model.findCollects(this, user.getMuserName(), pageId, I.PAGE_SIZE_DEFAULT, new OnCompleteListener<CollectBean[]>() {
             @Override
             public void onSuccess(CollectBean[] result) {
-                if (result == null) {
-
-                } else {
-                    ArrayList<CollectBean> list = ConvertUtils.array2List(result);
-                    Log.e(TAG, "list=" + list.size() + Arrays.toString(result));
-                    mAdapter.initGoodsList(list);
+                Log.e(TAG, Arrays.toString(result));
+                mAdapter.setMore(result.length > 0 && result != null);
+                if (!mAdapter.isMore()) {
+                    if (action == ACTION_PULL_UP) {
+                        mAdapter.setFooter("没有更多数据加载");
+                    }
+                    return;
+                }
+                mAdapter.setFooter("加载更多");
+                ArrayList<CollectBean> goodsList = ConvertUtils.array2List(result);
+                switch (action) {
+                    case ACTION_DOWNLOAD:
+                        mAdapter.initGoodsList(goodsList);
+                        break;
+                    case ACTION_PULL_DOWN:
+                        srl.setRefreshing(false);
+                        tvHint.setVisibility(View.GONE);
+                        mAdapter.initGoodsList(goodsList);
+                        break;
+                    case ACTION_PULL_UP:
+                        mAdapter.addGoodsList(goodsList);
+                        break;
                 }
             }
 
@@ -93,5 +115,33 @@ public class CollectsActivity extends AppCompatActivity {
         mAdapter = new CollectAdapter(this, new ArrayList<CollectBean>());
         rvCollect.addItemDecoration(new SpaceItemDecoration(15));
         rvCollect.setAdapter(mAdapter);
+    }
+
+    private void setPullUpListener() {
+        rvCollect.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                mAdapter.setDragging(newState == RecyclerView.SCROLL_STATE_DRAGGING);
+                int lastPosition = mLayoutManager.findLastVisibleItemPosition();
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && mAdapter.isMore()
+                        && lastPosition == mAdapter.getItemCount() - 1) {
+                    pageId++;
+                    initData(ACTION_PULL_UP, pageId);
+                }
+            }
+        });
+    }
+
+    private void setPullDownListener() {
+        srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                srl.setRefreshing(true);
+                tvHint.setVisibility(View.VISIBLE);
+                pageId = 1;
+                initData(ACTION_PULL_DOWN, pageId);
+            }
+        });
     }
 }
