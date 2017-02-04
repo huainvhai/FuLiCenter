@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
-import cn.ucai.fulicenter.controller.adapter.BoutiqueAdapter;
+import cn.ucai.fulicenter.controller.adapter.CartAdapter;
 import cn.ucai.fulicenter.model.bean.BoutiqueBean;
 import cn.ucai.fulicenter.model.bean.CartBean;
 import cn.ucai.fulicenter.model.bean.User;
@@ -42,7 +42,7 @@ public class CartFragment extends Fragment {
     public static final int ACTION_DOWNLOAD = 0;
     public static final int ACTION_PULL_DOWN = 2;
 
-    ArrayList<BoutiqueBean> mBoutiqueList;
+    ArrayList<CartBean> mCartList;
 
     @BindView(R.id.tvHint)
     TextView tvHint;
@@ -52,7 +52,7 @@ public class CartFragment extends Fragment {
     SwipeRefreshLayout srl;
 
     LinearLayoutManager mLayoutManager;
-    BoutiqueAdapter mAdapter;
+    CartAdapter mAdapter;
     IModelUser mModel;
     @BindView(R.id.loadMore)
     TextView loadMore;
@@ -93,20 +93,17 @@ public class CartFragment extends Fragment {
                 @Override
                 public void onSuccess(CartBean[] result) {
                     Log.e(TAG, Arrays.toString(result));
+                    srl.setRefreshing(false);
+                    tvHint.setVisibility(View.GONE);
                     srl.setVisibility(View.VISIBLE);
                     loadMore.setVisibility(View.GONE);
                     if (result.length > 0 && result != null) {
                         ArrayList<CartBean> cartBean = ConvertUtils.array2List(result);
                         Log.e(TAG, "cartBean=" + cartBean.size());
-                        switch (action) {
-                            case ACTION_DOWNLOAD:
-                                //mAdapter.initBoutiqueList(boutiqueBean);
-                                break;
-                            case ACTION_PULL_DOWN:
-                                srl.setRefreshing(false);
-                                tvHint.setVisibility(View.GONE);
-                                //mAdapter.initBoutiqueList(boutiqueBean);
-                                break;
+                        if (action == ACTION_DOWNLOAD || action == ACTION_PULL_DOWN) {
+                            mAdapter.initData(cartBean);
+                        } else {
+                            mAdapter.addData(cartBean);
                         }
                     } else {
                         srl.setVisibility(View.GONE);
@@ -117,6 +114,7 @@ public class CartFragment extends Fragment {
                 @Override
                 public void onError(String error) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                    srl.setRefreshing(false);
                     srl.setVisibility(View.GONE);
                     loadMore.setVisibility(View.VISIBLE);
                 }
@@ -134,8 +132,8 @@ public class CartFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         rvBoutique.setLayoutManager(mLayoutManager);
         rvBoutique.addItemDecoration(new SpaceItemDecoration(15));
-        mBoutiqueList = new ArrayList<>();
-        mAdapter = new BoutiqueAdapter(getActivity(), mBoutiqueList);
+        mCartList = new ArrayList<>();
+        mAdapter = new CartAdapter(getActivity(), mCartList);
         rvBoutique.setAdapter(mAdapter);
 
         srl.setVisibility(View.GONE);
