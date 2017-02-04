@@ -15,6 +15,7 @@ import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.controller.fragment.BoutiqueFragment;
+import cn.ucai.fulicenter.controller.fragment.CartFragment;
 import cn.ucai.fulicenter.controller.fragment.CategoryFragment;
 import cn.ucai.fulicenter.controller.fragment.NewGoodsFragment;
 import cn.ucai.fulicenter.controller.fragment.PersonalFragment;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     NewGoodsFragment mGoodsFragment;
     BoutiqueFragment mBoutiqueFragment;
     CategoryFragment mCategoryFragment;
+    CartFragment mCartFragment;
     PersonalFragment mPersonalFragment;
     Fragment[] mFragemnts;
 
@@ -58,10 +60,12 @@ public class MainActivity extends AppCompatActivity {
         mGoodsFragment = new NewGoodsFragment();
         mBoutiqueFragment = new BoutiqueFragment();
         mCategoryFragment = new CategoryFragment();
+        mCartFragment = new CartFragment();
         mPersonalFragment = new PersonalFragment();
         mFragemnts[0] = mGoodsFragment;
         mFragemnts[1] = mBoutiqueFragment;
         mFragemnts[2] = mCategoryFragment;
+        mFragemnts[3] = mCartFragment;
         mFragemnts[4] = mPersonalFragment;
 
         getSupportFragmentManager().beginTransaction()
@@ -88,7 +92,11 @@ public class MainActivity extends AppCompatActivity {
                 index = 2;
                 break;
             case R.id.layout_cart:
-                index = 3;
+                if (FuLiCenterApplication.getUser() == null) {
+                    MFGT.gotoLogin(this, I.REQUEST_CODE_LOGIN_FROM_CART);
+                } else {
+                    index = 3;
+                }
                 break;
             case R.id.layout_personal_center:
                 if (FuLiCenterApplication.getUser() == null) {
@@ -145,8 +153,13 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e(TAG, "requestCode=" + requestCode + ",resultCode=" + resultCode);
         //要求登录成功而且请求码I.REQUEST_CODE_LOGIN，才能回到个人中心界面
-        if (requestCode == I.REQUEST_CODE_LOGIN && resultCode == RESULT_OK) {
-            index = 4;
+        if (resultCode == RESULT_OK) {
+            if (requestCode == I.REQUEST_CODE_LOGIN) {
+                index = 4;
+            }
+            if (requestCode == I.REQUEST_CODE_LOGIN_FROM_CART) {
+                index = 3;
+            }
             setFragment();
             setRadioStatus();
         }
