@@ -37,6 +37,7 @@ public class PersonalFragment extends Fragment {
     TextView tvCollectCount;
 
     IModelUser model;
+    User user;
 
     public PersonalFragment() {
         // Required empty public constructor
@@ -54,7 +55,7 @@ public class PersonalFragment extends Fragment {
     }
 
     private void initData() {
-        User user = FuLiCenterApplication.getUser();
+        user = FuLiCenterApplication.getUser();
         if (user != null) {
             //加载用户信息
             loadUserInfo(user);
@@ -85,7 +86,7 @@ public class PersonalFragment extends Fragment {
 
     public void getCollectCount() {
         model = new ModelUser();
-        model.getCollectCount(getActivity(), FuLiCenterApplication.getUser().getMuserName(), new OnCompleteListener<MessageBean>() {
+        model.getCollectCount(getActivity(), user.getMuserName(), new OnCompleteListener<MessageBean>() {
             @Override
             public void onSuccess(MessageBean result) {
                 Log.e(TAG, "result=" + result);
@@ -109,4 +110,8 @@ public class PersonalFragment extends Fragment {
         MFGT.gotoSettiings(getActivity());
     }
 
+    @OnClick(R.id.layout_center_collect)
+    public void findCollects() {
+        MFGT.gotoCollects(getActivity());
+    }
 }
