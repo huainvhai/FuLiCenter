@@ -18,7 +18,9 @@ import cn.ucai.fulicenter.model.bean.GoodsDetailsBean;
 import cn.ucai.fulicenter.model.bean.MessageBean;
 import cn.ucai.fulicenter.model.bean.User;
 import cn.ucai.fulicenter.model.net.IModelGoods;
+import cn.ucai.fulicenter.model.net.IModelUser;
 import cn.ucai.fulicenter.model.net.ModeGoods;
+import cn.ucai.fulicenter.model.net.ModelUser;
 import cn.ucai.fulicenter.model.net.OnCompleteListener;
 import cn.ucai.fulicenter.model.utils.CommonUtils;
 import cn.ucai.fulicenter.view.FlowIndicator;
@@ -28,6 +30,7 @@ import cn.ucai.fulicenter.view.SlideAutoLoopView;
 public class GoodsDetailActivity extends AppCompatActivity {
     int goodsId;
     IModelGoods mModel;
+    IModelUser userModel;
     @BindView(R.id.tv_good_name_english)
     TextView tvGoodNameEnglish;
     @BindView(R.id.tv_good_name)
@@ -157,7 +160,7 @@ public class GoodsDetailActivity extends AppCompatActivity {
                             setCollectStatus();
                             CommonUtils.showShortToast(result.getMsg());
                             sendBroadcast(new Intent(I.BROADCAST_UPDATA_COLLECT)
-                            .putExtra(I.Collect.GOODS_ID,goodsId));
+                                    .putExtra(I.Collect.GOODS_ID, goodsId));
                         }
                     }
 
@@ -193,5 +196,24 @@ public class GoodsDetailActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.iv_good_cart)
+    public void addCart() {
+        userModel = new ModelUser();
+        User user = FuLiCenterApplication.getUser();
+        userModel.updateCart(this, user.getMuserName(), I.ACTION_CART_ADD, goodsId,
+                1, 0, new OnCompleteListener<MessageBean>() {
+                    @Override
+                    public void onSuccess(MessageBean result) {
+                        if (result != null && result.isSuccess()) {
+                            CommonUtils.showShortToast(R.string.add_goods_success);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                });
+    }
 
 }
