@@ -88,6 +88,13 @@ public class CollectAdapter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
+    //通过goodsId移除 在商品详情发送广播
+    public void removeItem(int goodsId) {
+        if (goodsId != 0) {
+            mList.remove(new CollectBean(goodsId));
+            notifyDataSetChanged();
+        }
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -138,7 +145,6 @@ public class CollectAdapter extends RecyclerView.Adapter {
         }
     }
 
-
     class CollectsViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.ivGoodsThumb)
         ImageView ivGoodsThumb;
@@ -173,8 +179,10 @@ public class CollectAdapter extends RecyclerView.Adapter {
                     I.ACTION_DELETE_COLLECT, new OnCompleteListener<MessageBean>() {
                         @Override
                         public void onSuccess(MessageBean result) {
-                            mList.remove(itemPosition);
-                            notifyDataSetChanged();
+                            if (result != null && result.isSuccess()) {
+                                mList.remove(itemPosition);
+                                notifyDataSetChanged();
+                            }
                         }
 
                         @Override
