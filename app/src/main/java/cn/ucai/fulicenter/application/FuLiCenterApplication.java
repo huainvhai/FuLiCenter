@@ -2,9 +2,8 @@ package cn.ucai.fulicenter.application;
 
 import android.app.Application;
 
-import java.util.HashMap;
 
-import cn.ucai.fulicenter.model.bean.CartBean;
+import cn.sharesdk.framework.ShareSDK;
 import cn.ucai.fulicenter.model.bean.User;
 
 /**
@@ -22,6 +21,7 @@ public class FuLiCenterApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        ShareSDK.initSDK(this);
     }
 
     //在内存中保存数据
