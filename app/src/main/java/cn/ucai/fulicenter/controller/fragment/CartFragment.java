@@ -33,8 +33,10 @@ import cn.ucai.fulicenter.model.bean.User;
 import cn.ucai.fulicenter.model.net.IModelUser;
 import cn.ucai.fulicenter.model.net.ModelUser;
 import cn.ucai.fulicenter.model.net.OnCompleteListener;
+import cn.ucai.fulicenter.model.utils.CommonUtils;
 import cn.ucai.fulicenter.model.utils.ConvertUtils;
 import cn.ucai.fulicenter.model.utils.SpaceItemDecoration;
+import cn.ucai.fulicenter.view.MFGT;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,6 +67,9 @@ public class CartFragment extends Fragment {
     TextView tvCartSavePrice;
     UpdateCartReceiver mReceiver;
 
+    int sumPrice = 0;
+    int payPrice = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -82,7 +87,7 @@ public class CartFragment extends Fragment {
     private void setReceiverListener() {
         mReceiver = new UpdateCartReceiver();
         IntentFilter filter = new IntentFilter(I.BROADCAST_UPDATA_CART);
-        getContext().registerReceiver(mReceiver,filter);
+        getContext().registerReceiver(mReceiver, filter);
     }
 
     private void initListener() {
@@ -160,7 +165,8 @@ public class CartFragment extends Fragment {
     }
 
     private void setPrice() {
-        int sumPrice = 0;
+        sumPrice = 0;
+        payPrice = 0;
         int savePrice = 0;
         if (mCartList != null && mCartList.size() > 0) {
             for (CartBean cart : mCartList) {
@@ -175,6 +181,7 @@ public class CartFragment extends Fragment {
         tvCartSumPrice.setText("合计:￥" + sumPrice);
         tvCartSavePrice.setText("节省:￥" + savePrice);
         mAdapter.notifyDataSetChanged();
+        payPrice = sumPrice - savePrice;
     }
 
     //currencyPrice":"￥140
@@ -186,11 +193,11 @@ public class CartFragment extends Fragment {
     }
 
 
-    class UpdateCartReceiver extends BroadcastReceiver{
+    class UpdateCartReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG,"onReceiver " );
+            Log.e(TAG, "onReceiver ");
             setPrice();
         }
     }
@@ -198,8 +205,18 @@ public class CartFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mReceiver != null){
+        if (mReceiver != null) {
             getContext().unregisterReceiver(mReceiver);
+        }
+    }
+
+    @OnClick(R.id.tv_cart_buy)
+    public void gotoBuy() {
+        if (sumPrice > 0) {
+            Log.e(TAG,"sumPrice=" + sumPrice);
+            MFGT.gotoOrder(getActivity(),payPrice);
+        } else {
+            CommonUtils.showShortToast(R.string.order_nothing);
         }
     }
 }
